@@ -16,6 +16,12 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage('Logout', Icons.logout, Colors.red),
   ];
 
+  int _getColumnCount(double width) {
+    if (width >= 900) return 3;
+    if (width >= 600) return 2;
+    return 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Scaffold provides the page structure and SnackBar area.
@@ -27,51 +33,78 @@ class MyHomePage extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Display the owner information in one row.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final horizontalPadding = constraints.maxWidth < 600 ? 16.0 : 32.0;
+          final availableWidth = constraints.maxWidth - (horizontalPadding * 2);
+          final showInfoCardsInRow = availableWidth >= 700;
+          final infoCardWidth = showInfoCardsInRow
+              ? (availableWidth - 24) / 3
+              : availableWidth;
+          final columnCount = _getColumnCount(availableWidth);
+          final itemAspectRatio = columnCount == 1 ? 2.4 : 1.2;
+
+          // One scroll view keeps the page usable on short and narrow screens.
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: 24,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: nama),
-                InfoCard(title: 'Class', content: kelas),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    InfoCard(
+                      title: 'NPM',
+                      content: npm,
+                      icon: Icons.badge,
+                      width: infoCardWidth,
+                    ),
+                    InfoCard(
+                      title: 'Name',
+                      content: nama,
+                      icon: Icons.person,
+                      width: infoCardWidth,
+                    ),
+                    InfoCard(
+                      title: 'Class',
+                      content: kelas,
+                      icon: Icons.school,
+                      width: infoCardWidth,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                const Text(
+                  'Selamat datang di MyPortfolio Mobile!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Pilih menu untuk menjelajahi portofolio saya.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+                const SizedBox(height: 20),
+                // The grid adapts its column count to the available screen width.
+                GridView.count(
+                  crossAxisCount: columnCount,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: itemAspectRatio,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: items.map((item) => ItemCard(item)).toList(),
+                ),
               ],
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text(
-                      'Selamat datang di MyPortfolio Mobile!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  // Arrange the menu actions in a three-column grid.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    shrinkWrap: true,
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

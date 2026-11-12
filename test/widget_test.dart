@@ -17,6 +17,8 @@ void main() {
     expect(find.text('Tambah Proyek'), findsOneWidget);
     expect(find.text('Logout'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Lihat Proyek'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Lihat Proyek'));
     await tester.pump();
 
