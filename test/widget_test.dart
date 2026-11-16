@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:myportofolio_mobile/main.dart';
 
 void main() {
-  testWidgets('portfolio menu displays information and actions', (
+  testWidgets('portfolio menu displays owner information and actions', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MyApp());
@@ -16,14 +16,27 @@ void main() {
     expect(find.text('Lihat Proyek'), findsOneWidget);
     expect(find.text('Tambah Proyek'), findsOneWidget);
     expect(find.text('Logout'), findsOneWidget);
-
-    await tester.tap(find.text('Lihat Proyek'));
-    await tester.pump();
-
-    expect(
-      find.text('Kamu telah menekan tombol Lihat Proyek!'),
-      findsOneWidget,
-    );
-    expect(find.byType(SnackBar), findsOneWidget);
   });
+
+  const actionNames = ['Lihat Proyek', 'Tambah Proyek', 'Logout'];
+
+  for (final actionName in actionNames) {
+    testWidgets('$actionName displays the correct feedback message', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MyApp());
+
+      final action = find.text(actionName);
+      await tester.ensureVisible(action);
+      await tester.pumpAndSettle();
+      await tester.tap(action);
+      await tester.pump();
+
+      expect(
+        find.text('Kamu telah menekan tombol $actionName!'),
+        findsOneWidget,
+      );
+      expect(find.byType(SnackBar), findsOneWidget);
+    });
+  }
 }
