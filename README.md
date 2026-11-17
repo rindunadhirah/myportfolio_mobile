@@ -1,6 +1,6 @@
 # MyPortfolio Mobile
 
-MyPortfolio Mobile is a Flutter application that introduces my personal portfolio. It displays my student information and provides simple actions to view projects, add a project, and log out.
+MyPortfolio Mobile is a Flutter application that introduces my personal portfolio. It displays my student information and provides navigation, project actions, and a validated form for entering project data.
 
 This project continues the personal portfolio ecosystem that I previously built with Django. The mobile application is stored in a separate repository from the Django project.
 
@@ -9,9 +9,13 @@ This project continues the personal portfolio ecosystem that I previously built 
 - Displays my NPM, full name, and PBP class
 - Provides three portfolio action cards with different colors
 - Shows a matching SnackBar message when an action is selected
+- Provides a drawer for navigation between Home and Add Project
+- Opens the project form from both the drawer and the action card
+- Validates required project information and optional project links
+- Displays submitted project information in a confirmation dialog
 - Adjusts the card layout for desktop, tablet, and mobile screens
 - Uses reusable and separated model and widget files
-- Includes widget tests for the owner information and all menu actions
+- Includes widget tests for menu actions, navigation, validation, and form submission
 
 ## Requirements
 
@@ -60,22 +64,27 @@ flutter test
 ```text
 lib/
   main.dart
-  menu.dart
   models/
     item_homepage.dart
+  screens/
+    menu.dart
+    project_form.dart
   widgets/
     info_card.dart
-    item_card.dart
+    left_drawer.dart
+    project_card.dart
 test/
   widget_test.dart
 ```
 
 - `main.dart` starts the application and defines its theme.
 - `menu.dart` arranges the main portfolio page.
-- `item_homepage.dart` stores the name, icon, and color of each action.
+- `project_form.dart` provides project inputs, validation, and confirmation.
+- `item_homepage.dart` stores the name, icon, color, and action of each menu item.
 - `info_card.dart` displays one piece of owner information.
-- `item_card.dart` displays a tappable portfolio action.
-- `widget_test.dart` checks the page content and button feedback.
+- `left_drawer.dart` provides navigation between the application screens.
+- `project_card.dart` displays a tappable portfolio action.
+- `widget_test.dart` checks content, navigation, validation, and interactions.
 
 ## Weekly Progress
 
@@ -96,6 +105,18 @@ test/
 - Added a responsive layout for different screen sizes
 - Added icons to improve the information cards
 - Added widget tests for the page content and all menu interactions
+
+### Tutorial 09
+
+- Added the `material_ui` dependency and updated Material imports
+- Organized portfolio pages inside the `screens` directory
+- Added a reusable navigation drawer for Home and Add Project
+- Added navigation with `push` and `pushReplacement`
+- Created a responsive project form with text inputs and a category dropdown
+- Added required field validation and optional URL validation
+- Displayed submitted project data in a confirmation dialog
+- Reset every form field after a successful submission
+- Added widget tests for the drawer, routes, validation, dialog, and form reset
 
 ## Assignment 7
 
@@ -146,7 +167,7 @@ test/
 
 ## AI Usage Disclosure
 
-I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutorial 08 and Assignment 7.
+I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutorial 08, Assignment 7, and Tutorial 09.
 
 ### How AI Assisted Me
 
@@ -155,15 +176,20 @@ I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutor
 - Helped separate the model, information card, and action card into reusable files
 - Helped create a responsive layout with `LayoutBuilder`, `Wrap`, and `GridView`
 - Helped write and run widget tests for the page content and SnackBar messages
+- Helped organize navigation with a drawer and Navigator routes
+- Helped build form validation and a confirmation dialog
+- Helped test project form submission and reset behavior
 - Helped organize this README and explain Flutter concepts in simple English
 
 ### Prompt Strategy
 
-I gave the AI the complete assignment instructions and rubric. I asked it to create a roadmap before editing the code. I then asked it to complete one phase at a time, explain the purpose of each change, run checks, and create descriptive conventional commits. I also asked for short and useful code comments instead of comments on every line.
+I gave the AI the complete tutorial and assignment instructions. I asked it to create a roadmap before editing the code. I then asked it to complete one phase at a time, explain the purpose of each change, run checks, and create descriptive conventional commits. I also asked for short and useful code comments instead of comments on every line.
 
 ### AI Limitations and Manual Fixes
 
 AI output still required verification. The first tutorial version used sample identity data, so I provided and confirmed my correct NPM, full name, and PBP class. I also checked that the proposed features matched the assignment instead of accepting unrelated additions. Automated tests can confirm widget behavior, but they cannot guarantee that every layout matches my visual preference. Because of this, I also review the application manually in the browser.
+
+During Tutorial 09, the first drawer header was too tall for the widget test screen. The expanded test suite found the overflow, so the header was simplified and tested again. The tests also helped verify that the category dropdown returned to its default value after submission. This showed that generated code still needed automated and visual verification.
 
 The AI could not know my identity, class, design preference, or repository setup without my input. I reviewed the explanations, selected the final feature scope, and kept control of the GitHub repository and push process.
 
@@ -175,3 +201,7 @@ The AI could not know my identity, class, design preference, or repository setup
 4. I asked the AI to separate reusable models and widgets into clear files.
 5. I asked the AI to improve responsiveness and prevent overflow on smaller screens.
 6. I asked the AI to add tests for all menu actions and explain the reflective questions in simple English.
+7. I asked the AI to read Tutorial 09 and plan navigation, form, testing, and documentation phases.
+8. I asked the AI to add Material UI and reorganize screens and widgets without breaking existing features.
+9. I asked the AI to build a validated project form and connect it through the drawer and project card.
+10. I asked the AI to test every route, validation message, dialog value, and form reset behavior.
