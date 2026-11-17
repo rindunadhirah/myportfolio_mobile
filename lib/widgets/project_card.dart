@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// Displays a tappable portfolio action and its feedback message.
 class ProjectCard extends StatelessWidget {
@@ -22,6 +23,13 @@ class ProjectCard extends StatelessWidget {
                 content: Text('Kamu telah menekan tombol ${item.name}!'),
               ),
             );
+
+          if (item.action == PortfolioAction.addProject) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
+            );
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(8),
