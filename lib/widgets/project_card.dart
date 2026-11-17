@@ -2,8 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 
 /// Displays a tappable portfolio action and its feedback message.
-class ItemCard extends StatelessWidget {
-  const ItemCard(this.item, {super.key});
+class ProjectCard extends StatelessWidget {
+  const ProjectCard(this.item, {super.key});
 
   final ItemHomepage item;
 

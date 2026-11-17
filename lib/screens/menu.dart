@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
-import 'package:myportofolio_mobile/widgets/item_card.dart';
+import 'package:myportofolio_mobile/widgets/project_card.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -99,7 +99,7 @@ class MyHomePage extends StatelessWidget {
                   childAspectRatio: itemAspectRatio,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  children: items.map((item) => ItemCard(item)).toList(),
+                  children: items.map((item) => ProjectCard(item)).toList(),
                 ),
               ],
             ),
