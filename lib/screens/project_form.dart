@@ -170,6 +170,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
+                    key: ValueKey(_category),
                     initialValue: _category,
                     decoration: _fieldDecoration(
                       label: 'Project Category',

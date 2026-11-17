@@ -19,12 +19,10 @@ class LeftDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Icon(Icons.work_outline, color: Colors.white, size: 36),
-                SizedBox(height: 12),
                 Text(
                   'My Portfolio',
                   style: TextStyle(
-                    fontSize: 26,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -32,7 +30,7 @@ class LeftDrawer extends StatelessWidget {
                 SizedBox(height: 6),
                 Text(
                   'Explore my projects and experiences.',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 13),
                 ),
               ],
             ),
