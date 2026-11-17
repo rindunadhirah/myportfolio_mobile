@@ -102,12 +102,12 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
     );
 
     if (!mounted) return;
-    _formKey.currentState!.reset();
     _nameController.clear();
     _descriptionController.clear();
     _technologiesController.clear();
     _linkController.clear();
     setState(() => _category = _categories.first);
+    _formKey.currentState!.reset();
   }
 
   @override
@@ -170,8 +170,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    key: ValueKey(_category),
-                    initialValue: _category,
+                    initialValue: _categories.first,
                     decoration: _fieldDecoration(
                       label: 'Project Category',
                       hint: 'Choose a category',

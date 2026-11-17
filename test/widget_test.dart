@@ -184,5 +184,7 @@ void main() {
       expect(field.controller?.text, isEmpty);
     }
     expect(find.text('Web Development'), findsOneWidget);
+    expect(find.text('Enter a project name.'), findsNothing);
+    expect(find.text('Enter a project description.'), findsNothing);
   });
 }
