@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'package:myportofolio_mobile/main.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
 Future<void> _pumpPortfolioApp(WidgetTester tester) async {
@@ -10,6 +11,10 @@ Future<void> _pumpPortfolioApp(WidgetTester tester) async {
 
 Future<void> _pumpProjectForm(WidgetTester tester) async {
   await tester.pumpWidget(const MaterialApp(home: ProjectFormPage()));
+}
+
+Future<void> _pumpExperienceForm(WidgetTester tester) async {
+  await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
 }
 
 Future<void> _tapVisibleText(WidgetTester tester, String text) async {
@@ -25,6 +30,20 @@ Future<void> _openProjectFormFromCard(WidgetTester tester) async {
   expect(find.text('Add Project Form'), findsOneWidget);
 }
 
+Future<void> _openExperienceFormFromCard(WidgetTester tester) async {
+  await _tapVisibleText(tester, 'Tambah Pengalaman');
+  await tester.pumpAndSettle();
+  expect(find.text('Add Experience Form'), findsOneWidget);
+}
+
+Future<void> _chooseInitialDate(WidgetTester tester, Key fieldKey) async {
+  await tester.ensureVisible(find.byKey(fieldKey));
+  await tester.tap(find.byKey(fieldKey));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('OK'));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets('portfolio menu displays owner information and actions', (
     WidgetTester tester,
@@ -37,10 +56,16 @@ void main() {
     expect(find.text('PBP D'), findsOneWidget);
     expect(find.text('Lihat Proyek'), findsOneWidget);
     expect(find.text('Tambah Proyek'), findsOneWidget);
+    expect(find.text('Tambah Pengalaman'), findsOneWidget);
     expect(find.text('Logout'), findsOneWidget);
   });
 
-  const actionNames = ['Lihat Proyek', 'Tambah Proyek', 'Logout'];
+  const actionNames = [
+    'Lihat Proyek',
+    'Tambah Proyek',
+    'Tambah Pengalaman',
+    'Logout',
+  ];
 
   for (final actionName in actionNames) {
     testWidgets('$actionName displays the correct feedback message', (
@@ -69,6 +94,7 @@ void main() {
     expect(find.text('My Portfolio'), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('Add Project'), findsOneWidget);
+    expect(find.text('Add Experience'), findsOneWidget);
   });
 
   testWidgets('drawer opens the project form', (WidgetTester tester) async {
@@ -108,6 +134,31 @@ void main() {
 
     expect(find.text('MyPortfolio'), findsOneWidget);
     expect(find.text('Rindu Maharani Nadhirah'), findsOneWidget);
+  });
+
+  testWidgets('experience card opens the form and Back returns home', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPortfolioApp(tester);
+    await _openExperienceFormFromCard(tester);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(find.text('MyPortfolio'), findsOneWidget);
+    expect(find.text('Rindu Maharani Nadhirah'), findsOneWidget);
+  });
+
+  testWidgets('drawer opens the experience form', (WidgetTester tester) async {
+    await _pumpPortfolioApp(tester);
+
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add Experience'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add Experience Form'), findsOneWidget);
+    expect(find.text('Save Experience'), findsOneWidget);
   });
 
   testWidgets('empty required fields display validation messages', (
@@ -186,5 +237,110 @@ void main() {
     expect(find.text('Web Development'), findsOneWidget);
     expect(find.text('Enter a project name.'), findsNothing);
     expect(find.text('Enter a project description.'), findsNothing);
+  });
+
+  testWidgets('empty experience form displays validation messages', (
+    WidgetTester tester,
+  ) async {
+    await _pumpExperienceForm(tester);
+
+    await _tapVisibleText(tester, 'Save Experience');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Enter an experience title.'), findsOneWidget);
+    expect(find.text('Enter an organization.'), findsOneWidget);
+    expect(find.text('Choose a start date.'), findsOneWidget);
+    expect(find.text('Choose an end date.'), findsOneWidget);
+    expect(find.text('Enter a description.'), findsOneWidget);
+    expect(find.text('Enter a responsibility summary.'), findsOneWidget);
+    expect(find.text('Experience added successfully!'), findsNothing);
+  });
+
+  testWidgets('experience form rejects input containing only spaces', (
+    WidgetTester tester,
+  ) async {
+    await _pumpExperienceForm(tester);
+
+    await tester.enterText(find.byKey(const Key('experience-title')), '   ');
+    await tester.enterText(
+      find.byKey(const Key('experience-organization')),
+      '   ',
+    );
+    await tester.pump();
+
+    expect(find.text('Enter an experience title.'), findsOneWidget);
+    expect(find.text('Enter an organization.'), findsOneWidget);
+  });
+
+  testWidgets('ongoing experience appears in dialog and form resets', (
+    WidgetTester tester,
+  ) async {
+    await _pumpExperienceForm(tester);
+
+    await tester.enterText(
+      find.byKey(const Key('experience-title')),
+      'Product Management Intern',
+    );
+    await tester.enterText(
+      find.byKey(const Key('experience-organization')),
+      'Fasilkom UI',
+    );
+
+    await tester.tap(find.byKey(const Key('experience-category')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Internship').last);
+    await tester.pumpAndSettle();
+
+    await _chooseInitialDate(tester, const Key('experience-start-date'));
+    await tester.ensureVisible(find.byKey(const Key('experience-ongoing')));
+    await tester.tap(find.byKey(const Key('experience-ongoing')));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const Key('experience-description')),
+      'Learned how to develop a useful digital product.',
+    );
+    await tester.enterText(
+      find.byKey(const Key('experience-responsibilities')),
+      'Created requirements and worked with a product team.',
+    );
+    await _tapVisibleText(tester, 'Save Experience');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Experience added successfully!'), findsOneWidget);
+    expect(find.text('Title: Product Management Intern'), findsOneWidget);
+    expect(find.text('Organization: Fasilkom UI'), findsOneWidget);
+    expect(find.text('Category: Internship'), findsOneWidget);
+    expect(find.text('End Date: Ongoing'), findsOneWidget);
+    expect(
+      find.text(
+        'Description: Learned how to develop a useful digital product.',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        'Responsibilities: Created requirements and worked with a product team.',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<TextFormField>(find.byKey(const Key('experience-title')))
+          .controller
+          ?.text,
+      isEmpty,
+    );
+    expect(
+      tester
+          .widget<SwitchListTile>(find.byKey(const Key('experience-ongoing')))
+          .value,
+      isFalse,
+    );
+    expect(find.text('Enter an experience title.'), findsNothing);
   });
 }

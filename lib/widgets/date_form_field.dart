@@ -8,6 +8,7 @@ class DateFormField extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.onTap,
+    this.fieldKey,
     this.validator,
     this.enabled = true,
   });
@@ -16,12 +17,14 @@ class DateFormField extends StatelessWidget {
   final String label;
   final String hint;
   final VoidCallback onTap;
+  final Key? fieldKey;
   final FormFieldValidator<String>? validator;
   final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: fieldKey,
       controller: controller,
       readOnly: true,
       enabled: enabled,

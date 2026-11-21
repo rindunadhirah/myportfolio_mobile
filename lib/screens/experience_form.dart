@@ -206,6 +206,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 24),
                   TextFormField(
+                    key: const Key('experience-title'),
                     controller: _titleController,
                     textInputAction: TextInputAction.next,
                     decoration: _fieldDecoration(
@@ -222,6 +223,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('experience-organization'),
                     controller: _organizationController,
                     textInputAction: TextInputAction.next,
                     decoration: _fieldDecoration(
@@ -238,6 +240,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
+                    key: const Key('experience-category'),
                     initialValue: _categories.first,
                     decoration: _fieldDecoration(
                       label: 'Experience Category',
@@ -258,6 +261,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 16),
                   DateFormField(
+                    fieldKey: const Key('experience-start-date'),
                     controller: _startDateController,
                     label: 'Start Date',
                     hint: 'Choose the start date',
@@ -266,6 +270,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 12),
                   SwitchListTile.adaptive(
+                    key: const Key('experience-ongoing'),
                     contentPadding: EdgeInsets.zero,
                     title: const Text('Ongoing Experience'),
                     subtitle: const Text(
@@ -276,6 +281,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 12),
                   DateFormField(
+                    fieldKey: const Key('experience-end-date'),
                     controller: _endDateController,
                     label: 'End Date',
                     hint: _isOngoing ? 'Ongoing' : 'Choose the end date',
@@ -285,6 +291,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('experience-description'),
                     controller: _descriptionController,
                     maxLines: 4,
                     decoration: _fieldDecoration(
@@ -301,6 +308,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    key: const Key('experience-responsibilities'),
                     controller: _responsibilitiesController,
                     maxLines: 5,
                     decoration: _fieldDecoration(
@@ -310,7 +318,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                     ),
                     validator: (value) => FormValidators.requiredText(
                       value,
-                      'responsibilities',
+                      'responsibility summary',
                       minLength: 10,
                       maxLength: 500,
                     ),
@@ -319,6 +327,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   SizedBox(
                     height: 52,
                     child: ElevatedButton.icon(
+                      key: const Key('save-experience'),
                       onPressed: _saveExperience,
                       icon: const Icon(Icons.save_outlined),
                       label: const Text('Save Experience'),
