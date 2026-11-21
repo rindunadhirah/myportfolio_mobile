@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/utils/form_validators.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 class ProjectFormPage extends StatefulWidget {
@@ -45,24 +46,6 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
       prefixIcon: Icon(icon),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     );
-  }
-
-  String? _validateRequired(String? value, String fieldName) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Enter a $fieldName.';
-    }
-    return null;
-  }
-
-  String? _validateOptionalUrl(String? value) {
-    if (value == null || value.trim().isEmpty) return null;
-
-    final uri = Uri.tryParse(value.trim());
-    final hasValidScheme = uri?.scheme == 'http' || uri?.scheme == 'https';
-    if (uri == null || !hasValidScheme || uri.host.isEmpty) {
-      return 'Enter a valid URL starting with http:// or https://.';
-    }
-    return null;
   }
 
   Future<void> _saveProject() async {
@@ -154,7 +137,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                       icon: Icons.folder_outlined,
                     ),
                     validator: (value) =>
-                        _validateRequired(value, 'project name'),
+                        FormValidators.requiredText(value, 'project name'),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -165,8 +148,10 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                       hint: 'Describe the project and your contribution',
                       icon: Icons.description_outlined,
                     ),
-                    validator: (value) =>
-                        _validateRequired(value, 'project description'),
+                    validator: (value) => FormValidators.requiredText(
+                      value,
+                      'project description',
+                    ),
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
@@ -208,7 +193,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                       hint: 'https://example.com',
                       icon: Icons.link,
                     ),
-                    validator: _validateOptionalUrl,
+                    validator: FormValidators.optionalUrl,
                     onFieldSubmitted: (_) => _saveProject(),
                   ),
                   const SizedBox(height: 24),
