@@ -24,11 +24,17 @@ class MyHomePage extends StatelessWidget {
       Colors.green,
       PortfolioAction.addProject,
     ),
+    ItemHomepage(
+      'Tambah Pengalaman',
+      Icons.work_history_outlined,
+      Colors.brown,
+      PortfolioAction.addExperience,
+    ),
     ItemHomepage('Logout', Icons.logout, Colors.red, PortfolioAction.logout),
   ];
 
   int _getColumnCount(double width) {
-    if (width >= 900) return 3;
+    if (width >= 900) return 4;
     if (width >= 600) return 2;
     return 1;
   }

@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// Displays a tappable portfolio action and its feedback message.
@@ -24,10 +25,16 @@ class ProjectCard extends StatelessWidget {
               ),
             );
 
-          if (item.action == PortfolioAction.addProject) {
+          final Widget? destination = switch (item.action) {
+            PortfolioAction.addProject => const ProjectFormPage(),
+            PortfolioAction.addExperience => const ExperienceFormPage(),
+            _ => null,
+          };
+
+          if (destination != null) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
+              MaterialPageRoute(builder: (context) => destination),
             );
           }
         },
