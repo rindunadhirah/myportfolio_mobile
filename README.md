@@ -74,10 +74,13 @@ lib/
     experience_form.dart
     menu.dart
     project_form.dart
+  theme/
+    portfolio_theme.dart
   utils/
     form_validators.dart
   widgets/
     date_form_field.dart
+    form_intro.dart
     info_card.dart
     left_drawer.dart
     project_card.dart
@@ -90,8 +93,10 @@ test/
 - `project_form.dart` provides project inputs, validation, and confirmation.
 - `experience_form.dart` provides experience inputs, date selection, validation, and confirmation.
 - `item_homepage.dart` stores the name, icon, color, and action of each menu item.
+- `portfolio_theme.dart` stores the colors and shared visual theme from the Django portfolio.
 - `form_validators.dart` stores validation rules that can be reused by different forms.
 - `date_form_field.dart` provides a reusable field that opens a date picker.
+- `form_intro.dart` provides the matching dark introduction panel for both forms.
 - `info_card.dart` displays one piece of owner information.
 - `left_drawer.dart` provides navigation between the application screens.
 - `project_card.dart` displays a tappable portfolio action.
@@ -138,6 +143,7 @@ test/
 - Added a date picker for safer date selection
 - Connected the form through a new action card and the navigation drawer
 - Reused the same Scaffold, AppBar, theme color, and drawer across pages
+- Matched the mobile colors and rounded cards to the Django portfolio design
 - Displayed every submitted value in a confirmation dialog
 - Reset the complete form after a successful submission
 - Added widget tests for navigation, invalid input, valid input, dialog content, and reset behavior
@@ -232,6 +238,7 @@ I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutor
 - Helped plan and build the Experience Form for Assignment 8
 - Helped separate shared validators and the reusable date field
 - Helped test date input, ongoing status, navigation, dialog content, and form reset
+- Helped adapt the navy, brown, nude, and white web portfolio theme for Flutter
 - Helped organize this README and explain Flutter concepts in simple English
 
 ### Prompt Strategy
@@ -268,3 +275,4 @@ The AI could not know my identity, class, design preference, or repository setup
 14. I asked the AI to connect the form through the action card and drawer without breaking existing navigation.
 15. I asked the AI to test valid and invalid input, ongoing experience, dialog values, and form reset behavior.
 16. I asked the AI to audit the code, documentation, Git history, and assignment rubric before submission.
+17. I asked the AI to simplify the UI while matching the colors and rounded design of my Django portfolio.

@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/utils/form_validators.dart';
 import 'package:myportofolio_mobile/widgets/date_form_field.dart';
+import 'package:myportofolio_mobile/widgets/form_intro.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 class ExperienceFormPage extends StatefulWidget {
@@ -194,15 +195,10 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Add a portfolio experience',
-                    style: Theme.of(context).textTheme.headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Share a role or program that helped shape your skills.',
-                    style: TextStyle(color: Colors.grey[700]),
+                  const FormIntro(
+                    title: 'Add a portfolio experience',
+                    description: 'Share a role or program that helped shape your skills.',
+                    icon: Icons.work_history_outlined,
                   ),
                   const SizedBox(height: 24),
                   TextFormField(
@@ -331,10 +327,6 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                       onPressed: _saveExperience,
                       icon: const Icon(Icons.save_outlined),
                       label: const Text('Save Experience'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Colors.white,
-                      ),
                     ),
                   ),
                 ],

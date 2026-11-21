@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -37,7 +38,10 @@ class LeftDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.home_outlined),
+            leading: const Icon(
+              Icons.home_outlined,
+              color: PortfolioPalette.brown,
+            ),
             title: const Text('Home'),
             onTap: () {
               Navigator.pushReplacement(
@@ -47,7 +51,10 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.add_circle_outline),
+            leading: const Icon(
+              Icons.add_circle_outline,
+              color: PortfolioPalette.brown,
+            ),
             title: const Text('Add Project'),
             onTap: () {
               Navigator.pushReplacement(
@@ -59,7 +66,10 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.work_history_outlined),
+            leading: const Icon(
+              Icons.work_history_outlined,
+              color: PortfolioPalette.brown,
+            ),
             title: const Text('Add Experience'),
             onTap: () {
               Navigator.pushReplacement(

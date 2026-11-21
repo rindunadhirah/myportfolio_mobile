@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/utils/form_validators.dart';
+import 'package:myportofolio_mobile/widgets/form_intro.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 class ProjectFormPage extends StatefulWidget {
@@ -117,15 +118,10 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Add a portfolio project',
-                    style: Theme.of(context).textTheme.headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Complete the required information below. Your project will be shown in a confirmation dialog.',
-                    style: TextStyle(color: Colors.grey[700]),
+                  const FormIntro(
+                    title: 'Add a portfolio project',
+                    description: 'Complete the project details below and review them before saving.',
+                    icon: Icons.folder_outlined,
                   ),
                   const SizedBox(height: 24),
                   TextFormField(
@@ -203,10 +199,6 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                       onPressed: _saveProject,
                       icon: const Icon(Icons.save_outlined),
                       label: const Text('Save Project'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Colors.white,
-                      ),
                     ),
                   ),
                 ],
