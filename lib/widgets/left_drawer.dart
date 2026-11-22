@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -20,7 +22,7 @@ class LeftDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'My Portfolio',
+                  'Nadhirah',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -29,14 +31,17 @@ class LeftDrawer extends StatelessWidget {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  'Explore my projects and experiences.',
+                  'A closer look at my work and experience.',
                   style: TextStyle(color: Colors.white, fontSize: 13),
                 ),
               ],
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.home_outlined),
+            leading: const Icon(
+              Icons.home_outlined,
+              color: PortfolioPalette.brown,
+            ),
             title: const Text('Home'),
             onTap: () {
               Navigator.pushReplacement(
@@ -46,13 +51,31 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.add_circle_outline),
+            leading: const Icon(
+              Icons.add_circle_outline,
+              color: PortfolioPalette.brown,
+            ),
             title: const Text('Add Project'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const ProjectFormPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.work_history_outlined,
+              color: PortfolioPalette.brown,
+            ),
+            title: const Text('Add Experience'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ExperienceFormPage(),
                 ),
               );
             },

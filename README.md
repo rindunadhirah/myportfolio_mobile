@@ -1,18 +1,22 @@
 # MyPortfolio Mobile
 
-MyPortfolio Mobile is a Flutter application that introduces my personal portfolio. It displays my student information and provides navigation, project actions, and a validated form for entering project data.
+MyPortfolio Mobile is a Flutter application that introduces my personal portfolio. It displays my student information and provides navigation, project actions, and validated forms for entering project and experience data.
 
 This project continues the personal portfolio ecosystem that I previously built with Django. The mobile application is stored in a separate repository from the Django project.
 
 ## Features
 
 - Displays my NPM, full name, and PBP class
-- Provides three portfolio action cards with different colors
+- Provides four portfolio action cards with different colors
 - Shows a matching SnackBar message when an action is selected
-- Provides a drawer for navigation between Home and Add Project
+- Provides a drawer for navigation between Home, Add Project, and Add Experience
 - Opens the project form from both the drawer and the action card
 - Validates required project information and optional project links
 - Displays submitted project information in a confirmation dialog
+- Provides an experience form with categories, dates, and ongoing status
+- Checks empty spaces, text length, required dates, and date order
+- Uses a date picker to make date input easier and more accurate
+- Displays all submitted experience information in a confirmation dialog
 - Adjusts the card layout for desktop, tablet, and mobile screens
 - Uses reusable and separated model and widget files
 - Includes widget tests for menu actions, navigation, validation, and form submission
@@ -67,9 +71,16 @@ lib/
   models/
     item_homepage.dart
   screens/
+    experience_form.dart
     menu.dart
     project_form.dart
+  theme/
+    portfolio_theme.dart
+  utils/
+    form_validators.dart
   widgets/
+    date_form_field.dart
+    form_intro.dart
     info_card.dart
     left_drawer.dart
     project_card.dart
@@ -80,7 +91,12 @@ test/
 - `main.dart` starts the application and defines its theme.
 - `menu.dart` arranges the main portfolio page.
 - `project_form.dart` provides project inputs, validation, and confirmation.
+- `experience_form.dart` provides experience inputs, date selection, validation, and confirmation.
 - `item_homepage.dart` stores the name, icon, color, and action of each menu item.
+- `portfolio_theme.dart` stores the colors and shared visual theme from the Django portfolio.
+- `form_validators.dart` stores validation rules that can be reused by different forms.
+- `date_form_field.dart` provides a reusable field that opens a date picker.
+- `form_intro.dart` provides the matching dark introduction panel for both forms.
 - `info_card.dart` displays one piece of owner information.
 - `left_drawer.dart` provides navigation between the application screens.
 - `project_card.dart` displays a tappable portfolio action.
@@ -118,7 +134,23 @@ test/
 - Reset every form field after a successful submission
 - Added widget tests for the drawer, routes, validation, dialog, and form reset
 
-## Assignment 7
+### Assignment 8
+
+- Created an Experience Form in a separate screen file
+- Added title, organization, category, dates, description, and responsibilities inputs
+- Added an ongoing experience switch that disables the end date field
+- Added validation for empty spaces, input length, required dates, and date order
+- Added a date picker for safer date selection
+- Connected the form through a new action card and the navigation drawer
+- Reused the same Scaffold, AppBar, theme color, and drawer across pages
+- Matched the mobile colors and rounded cards to the Django portfolio design
+- Displayed every submitted value in a confirmation dialog
+- Reset the complete form after a successful submission
+- Added widget tests for navigation, invalid input, valid input, dialog content, and reset behavior
+
+## Reflective Questions
+
+### Assignment 7
 
 1. **What is a widget tree and how do parent and child widgets work?**
 
@@ -165,9 +197,33 @@ test/
 
    Hot restart starts the Dart application again and removes its current state. It is needed when changes affect initial values, global variables, static data, or the `main` function. A full restart may be needed after changing native Android or iOS code, adding certain plugins, or changing dependencies that require a new build.
 
+### Assignment 8
+
+1. **What is the difference between Navigator.push, Navigator.pushReplacement, and Navigator.pop?**
+
+   `Navigator.push` adds a new page on top of the current page. I use it when the Add Experience card opens the form. This keeps Home below the form, so the Back button can return to Home.
+
+   `Navigator.pushReplacement` replaces the current page. I use it for drawer navigation because it prevents repeated copies of Home or a form from building up in the navigation history.
+
+   `Navigator.pop` removes the current page or dialog. The OK button uses it to close the confirmation dialog. The normal Back button also removes the form page and returns to Home when the form was opened with `push`.
+
+2. **How do Scaffold, AppBar, Drawer, and the theme keep the pages consistent?**
+
+   Each main page uses a `Scaffold` for the same page structure. The project and experience forms use an `AppBar` with the same title style and primary theme color. They also reuse the same `LeftDrawer`, so users can find Home and both forms in the same place. The colors come from `Theme.of(context).colorScheme.primary`, which keeps the design consistent and avoids repeating a fixed color in every file.
+
+3. **How does the form stay usable on a small screen?**
+
+   The form uses `SingleChildScrollView`, so users can reach every field even when the screen is short or the keyboard is open. Padding separates the form from the screen edges. `SizedBox` gives clear space between inputs. A `ConstrainedBox` limits the width on a large screen while allowing the form to use the available width on a small screen. Multiline fields give enough space for longer descriptions without making other fields difficult to reach.
+
+4. **How do GlobalKey, validators, and validate work in this form?**
+
+   `GlobalKey<FormState>` gives the page access to the current `Form` state. Each field has a validator that returns an error message when its value is not acceptable. The Save button calls `validate()`. Flutter runs every validator and only opens the confirmation dialog when they all return `null`.
+
+   For example, a title containing only spaces is rejected because the validator trims the input before checking it. An end date earlier than the start date is also rejected. A keyboard type or input widget cannot replace these validators. A keyboard can make input easier, but it cannot understand rules such as required text, minimum length, or valid date order.
+
 ## AI Usage Disclosure
 
-I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutorial 08, Assignment 7, and Tutorial 09.
+I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutorial 08, Assignment 7, Tutorial 09, and Assignment 8.
 
 ### How AI Assisted Me
 
@@ -179,6 +235,10 @@ I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutor
 - Helped organize navigation with a drawer and Navigator routes
 - Helped build form validation and a confirmation dialog
 - Helped test project form submission and reset behavior
+- Helped plan and build the Experience Form for Assignment 8
+- Helped separate shared validators and the reusable date field
+- Helped test date input, ongoing status, navigation, dialog content, and form reset
+- Helped adapt the navy, brown, nude, and white web portfolio theme for Flutter
 - Helped organize this README and explain Flutter concepts in simple English
 
 ### Prompt Strategy
@@ -190,6 +250,10 @@ I gave the AI the complete tutorial and assignment instructions. I asked it to c
 AI output still required verification. The first tutorial version used sample identity data, so I provided and confirmed my correct NPM, full name, and PBP class. I also checked that the proposed features matched the assignment instead of accepting unrelated additions. Automated tests can confirm widget behavior, but they cannot guarantee that every layout matches my visual preference. Because of this, I also review the application manually in the browser.
 
 During Tutorial 09, the first drawer header was too tall for the widget test screen. The expanded test suite found the overflow, so the header was simplified and tested again. The tests also helped verify that the category dropdown returned to its default value after submission. This showed that generated code still needed automated and visual verification.
+
+During Assignment 8, the first reusable validator produced an awkward error message for some field names. I changed the article rule and used a clearer field name for the responsibility summary. One test also tried to tap a button after validation messages changed the form height. The feature worked, but the test produced a warning. I removed the unnecessary tap and ran all checks again. This showed that passing tests are not enough when the test output still contains warnings.
+
+The date picker prevents users from selecting an end date before the chosen start date. The form still includes a date order validator as a second safety check. I kept both because interface limits and data validation have different purposes.
 
 The AI could not know my identity, class, design preference, or repository setup without my input. I reviewed the explanations, selected the final feature scope, and kept control of the GitHub repository and push process.
 
@@ -205,3 +269,11 @@ The AI could not know my identity, class, design preference, or repository setup
 8. I asked the AI to add Material UI and reorganize screens and widgets without breaking existing features.
 9. I asked the AI to build a validated project form and connect it through the drawer and project card.
 10. I asked the AI to test every route, validation message, dialog value, and form reset behavior.
+11. I asked the AI to read Assignment 8 and create a phased roadmap that targets every scoring criterion.
+12. I asked the AI to build an Experience Form with suitable fields and stronger date validation.
+13. I asked the AI to reuse validation and date field code instead of repeating the same logic.
+14. I asked the AI to connect the form through the action card and drawer without breaking existing navigation.
+15. I asked the AI to test valid and invalid input, ongoing experience, dialog values, and form reset behavior.
+16. I asked the AI to audit the code, documentation, Git history, and assignment rubric before submission.
+17. I asked the AI to simplify the UI while matching the colors and rounded design of my Django portfolio.
+18. I asked the AI to rewrite the visible interface text in natural English that matches the tone of my web portfolio.

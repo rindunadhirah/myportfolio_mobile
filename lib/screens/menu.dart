@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
@@ -13,22 +14,33 @@ class MyHomePage extends StatelessWidget {
 
   static const List<ItemHomepage> items = [
     ItemHomepage(
-      'Lihat Proyek',
+      'View Projects',
       Icons.folder,
-      Colors.indigo,
+      PortfolioPalette.navySoft,
       PortfolioAction.viewProjects,
     ),
     ItemHomepage(
-      'Tambah Proyek',
+      'Add Project',
       Icons.add_circle,
-      Colors.green,
+      PortfolioPalette.brown,
       PortfolioAction.addProject,
     ),
-    ItemHomepage('Logout', Icons.logout, Colors.red, PortfolioAction.logout),
+    ItemHomepage(
+      'Add Experience',
+      Icons.work_history_outlined,
+      PortfolioPalette.nudeCream,
+      PortfolioAction.addExperience,
+    ),
+    ItemHomepage(
+      'Log Out',
+      Icons.logout,
+      PortfolioPalette.brownDark,
+      PortfolioAction.logout,
+    ),
   ];
 
   int _getColumnCount(double width) {
-    if (width >= 900) return 3;
+    if (width >= 900) return 4;
     if (width >= 600) return 2;
     return 1;
   }
@@ -66,6 +78,35 @@ class MyHomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: PortfolioPalette.navy,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'A closer look at my work',
+                        style: TextStyle(
+                          color: PortfolioPalette.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Explore the projects and experiences that have shaped how I learn, build, and collaborate.',
+                        style: TextStyle(
+                          color: PortfolioPalette.nudeCream,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
                 Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 12,
@@ -91,19 +132,7 @@ class MyHomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
-                const Text(
-                  'Selamat datang di MyPortfolio Mobile!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Pilih menu untuk menjelajahi portofolio saya.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 // The grid adapts its column count to the available screen width.
                 GridView.count(
                   crossAxisCount: columnCount,
