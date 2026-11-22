@@ -14,25 +14,25 @@ class MyHomePage extends StatelessWidget {
 
   static const List<ItemHomepage> items = [
     ItemHomepage(
-      'Lihat Proyek',
+      'View Projects',
       Icons.folder,
       PortfolioPalette.navySoft,
       PortfolioAction.viewProjects,
     ),
     ItemHomepage(
-      'Tambah Proyek',
+      'Add Project',
       Icons.add_circle,
       PortfolioPalette.brown,
       PortfolioAction.addProject,
     ),
     ItemHomepage(
-      'Tambah Pengalaman',
+      'Add Experience',
       Icons.work_history_outlined,
       PortfolioPalette.nudeCream,
       PortfolioAction.addExperience,
     ),
     ItemHomepage(
-      'Logout',
+      'Log Out',
       Icons.logout,
       PortfolioPalette.brownDark,
       PortfolioAction.logout,
@@ -88,7 +88,7 @@ class MyHomePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Selamat datang di MyPortfolio Mobile!',
+                        'A closer look at my work',
                         style: TextStyle(
                           color: PortfolioPalette.white,
                           fontSize: 22,
@@ -97,7 +97,7 @@ class MyHomePage extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Pilih menu untuk menjelajahi portofolio saya.',
+                        'Explore the projects and experiences that have shaped how I learn, build, and collaborate.',
                         style: TextStyle(
                           color: PortfolioPalette.nudeCream,
                           height: 1.4,

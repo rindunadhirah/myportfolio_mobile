@@ -28,11 +28,7 @@ class ProjectCard extends StatelessWidget {
         onTap: () {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text('Kamu telah menekan tombol ${item.name}!'),
-              ),
-            );
+            ..showSnackBar(SnackBar(content: Text('${item.name} selected.')));
 
           final Widget? destination = switch (item.action) {
             PortfolioAction.addProject => const ProjectFormPage(),

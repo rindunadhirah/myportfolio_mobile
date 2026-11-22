@@ -176,7 +176,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Add Experience Form',
+          'Add an Experience',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -196,8 +196,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const FormIntro(
-                    title: 'Add a portfolio experience',
-                    description: 'Share a role or program that helped shape your skills.',
+                    title: 'Share an experience',
+                    description: 'Add a role or program that has shaped how you learn, collaborate, and contribute.',
                     icon: Icons.work_history_outlined,
                   ),
                   const SizedBox(height: 24),

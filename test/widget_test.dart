@@ -25,15 +25,15 @@ Future<void> _tapVisibleText(WidgetTester tester, String text) async {
 }
 
 Future<void> _openProjectFormFromCard(WidgetTester tester) async {
-  await _tapVisibleText(tester, 'Tambah Proyek');
+  await _tapVisibleText(tester, 'Add Project');
   await tester.pumpAndSettle();
-  expect(find.text('Add Project Form'), findsOneWidget);
+  expect(find.text('Add a Project'), findsOneWidget);
 }
 
 Future<void> _openExperienceFormFromCard(WidgetTester tester) async {
-  await _tapVisibleText(tester, 'Tambah Pengalaman');
+  await _tapVisibleText(tester, 'Add Experience');
   await tester.pumpAndSettle();
-  expect(find.text('Add Experience Form'), findsOneWidget);
+  expect(find.text('Add an Experience'), findsOneWidget);
 }
 
 Future<void> _chooseInitialDate(WidgetTester tester, Key fieldKey) async {
@@ -54,17 +54,17 @@ void main() {
     expect(find.text('Rindu Maharani Nadhirah'), findsOneWidget);
     expect(find.text('2506587131'), findsOneWidget);
     expect(find.text('PBP D'), findsOneWidget);
-    expect(find.text('Lihat Proyek'), findsOneWidget);
-    expect(find.text('Tambah Proyek'), findsOneWidget);
-    expect(find.text('Tambah Pengalaman'), findsOneWidget);
-    expect(find.text('Logout'), findsOneWidget);
+    expect(find.text('View Projects'), findsOneWidget);
+    expect(find.text('Add Project'), findsOneWidget);
+    expect(find.text('Add Experience'), findsOneWidget);
+    expect(find.text('Log Out'), findsOneWidget);
   });
 
   const actionNames = [
-    'Lihat Proyek',
-    'Tambah Proyek',
-    'Tambah Pengalaman',
-    'Logout',
+    'View Projects',
+    'Add Project',
+    'Add Experience',
+    'Log Out',
   ];
 
   for (final actionName in actionNames) {
@@ -75,10 +75,7 @@ void main() {
       await _tapVisibleText(tester, actionName);
       await tester.pump();
 
-      expect(
-        find.text('Kamu telah menekan tombol $actionName!'),
-        findsOneWidget,
-      );
+      expect(find.text('$actionName selected.'), findsOneWidget);
       expect(find.byType(SnackBar), findsOneWidget);
     });
   }
@@ -91,10 +88,10 @@ void main() {
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
 
-    expect(find.text('My Portfolio'), findsOneWidget);
+    expect(find.text('Nadhirah'), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Add Project'), findsOneWidget);
-    expect(find.text('Add Experience'), findsOneWidget);
+    expect(find.widgetWithText(ListTile, 'Add Project'), findsOneWidget);
+    expect(find.widgetWithText(ListTile, 'Add Experience'), findsOneWidget);
   });
 
   testWidgets('drawer opens the project form', (WidgetTester tester) async {
@@ -102,10 +99,10 @@ void main() {
 
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Add Project'));
+    await tester.tap(find.widgetWithText(ListTile, 'Add Project'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Add Project Form'), findsOneWidget);
+    expect(find.text('Add a Project'), findsOneWidget);
     expect(find.text('Save Project'), findsOneWidget);
   });
 
@@ -154,10 +151,10 @@ void main() {
 
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Add Experience'));
+    await tester.tap(find.widgetWithText(ListTile, 'Add Experience'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Add Experience Form'), findsOneWidget);
+    expect(find.text('Add an Experience'), findsOneWidget);
     expect(find.text('Save Experience'), findsOneWidget);
   });
 

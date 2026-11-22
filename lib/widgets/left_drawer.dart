@@ -22,7 +22,7 @@ class LeftDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'My Portfolio',
+                  'Nadhirah',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -31,7 +31,7 @@ class LeftDrawer extends StatelessWidget {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  'Explore my projects and experiences.',
+                  'A closer look at my work and experience.',
                   style: TextStyle(color: Colors.white, fontSize: 13),
                 ),
               ],

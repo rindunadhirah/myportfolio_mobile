@@ -276,3 +276,4 @@ The AI could not know my identity, class, design preference, or repository setup
 15. I asked the AI to test valid and invalid input, ongoing experience, dialog values, and form reset behavior.
 16. I asked the AI to audit the code, documentation, Git history, and assignment rubric before submission.
 17. I asked the AI to simplify the UI while matching the colors and rounded design of my Django portfolio.
+18. I asked the AI to rewrite the visible interface text in natural English that matches the tone of my web portfolio.

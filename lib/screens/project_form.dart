@@ -99,7 +99,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Add Project Form',
+          'Add a Project',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -119,8 +119,8 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const FormIntro(
-                    title: 'Add a portfolio project',
-                    description: 'Complete the project details below and review them before saving.',
+                    title: 'Share a project',
+                    description: 'Add the story behind a project and review the details before saving.',
                     icon: Icons.folder_outlined,
                   ),
                   const SizedBox(height: 24),
