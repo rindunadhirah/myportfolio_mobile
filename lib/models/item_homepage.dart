@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
-enum PortfolioAction { viewProjects, addProject, addExperience, logout }
+enum PortfolioAction { viewProjects, addProject, addExperience, authentication }
 
 /// Stores the content and color displayed by a portfolio action card.
 class ItemHomepage {

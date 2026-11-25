@@ -52,6 +52,47 @@ class ApiClient {
     }
   }
 
+  /// Exchanges Django credentials for a mobile authentication token.
+  Future<String> obtainToken(String username, String password) async {
+    try {
+      final response = await _client.post(
+        _uri('/api/v1/auth/token/'),
+        headers: const {'Content-Type': 'application/json'},
+        body: jsonEncode({'username': username, 'password': password}),
+      );
+      _ensureSuccess(response);
+
+      final decoded = jsonDecode(response.body);
+      if (decoded is! Map<String, dynamic> || decoded['token'] is! String) {
+        throw const FormatException('Expected an authentication token.');
+      }
+      return decoded['token'] as String;
+    } on http.ClientException {
+      throw const ApiException(
+        'The portfolio server could not be reached. Please try again.',
+      );
+    } on FormatException {
+      throw const ApiException(
+        'The login response could not be read. Please try again.',
+      );
+    }
+  }
+
+  /// Revokes the current token on the Django backend.
+  Future<void> logout({required String token}) async {
+    try {
+      final response = await _client.post(
+        _uri('/api/v1/auth/logout/'),
+        headers: {'Authorization': 'Token $token'},
+      );
+      _ensureSuccess(response);
+    } on http.ClientException {
+      throw const ApiException(
+        'The server could not be reached, but this device was signed out.',
+      );
+    }
+  }
+
   /// Turns a stored Django static path or full URL into a displayable URL.
   String? resolveMediaUrl(String path) {
     final trimmedPath = path.trim();

@@ -1,11 +1,16 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
+import 'package:myportofolio_mobile/screens/login_screen.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/screens/project_list_screen.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
 import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
-/// Displays a tappable portfolio action and its feedback message.
+/// Displays a tappable portfolio navigation or authentication action.
 class ProjectCard extends StatelessWidget {
   const ProjectCard(this.item, {super.key});
 
@@ -26,25 +31,7 @@ class ProjectCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        onTap: () {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text('${item.name} selected.')));
-
-          final Widget? destination = switch (item.action) {
-            PortfolioAction.viewProjects => const ProjectListScreen(),
-            PortfolioAction.addProject => const ProjectFormPage(),
-            PortfolioAction.addExperience => const ExperienceFormPage(),
-            _ => null,
-          };
-
-          if (destination != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => destination),
-            );
-          }
-        },
+        onTap: () => _handleTap(context),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Center(
@@ -67,5 +54,41 @@ class ProjectCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _handleTap(BuildContext context) async {
+    switch (item.action) {
+      case PortfolioAction.viewProjects:
+        _open(context, const ProjectListScreen());
+      case PortfolioAction.addProject:
+        if (await ensureLoggedIn(context) && context.mounted) {
+          _open(context, const ProjectFormPage());
+        }
+      case PortfolioAction.addExperience:
+        _open(context, const ExperienceFormPage());
+      case PortfolioAction.authentication:
+        final authState = context.read<AuthState>();
+        if (!authState.isLoggedIn) {
+          _open(context, const LoginScreen());
+          return;
+        }
+
+        try {
+          await authState.logout();
+          if (context.mounted) _showMessage(context, 'You are now logged out.');
+        } on ApiException catch (error) {
+          if (context.mounted) _showMessage(context, error.message);
+        }
+    }
+  }
+
+  void _open(BuildContext context, Widget destination) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => destination));
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }

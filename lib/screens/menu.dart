@@ -1,9 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
 import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -12,7 +14,7 @@ class MyHomePage extends StatelessWidget {
   static const String nama = 'Rindu Maharani Nadhirah';
   static const String kelas = 'PBP D';
 
-  static const List<ItemHomepage> items = [
+  static const List<ItemHomepage> primaryItems = [
     ItemHomepage(
       'View Projects',
       Icons.folder,
@@ -31,12 +33,6 @@ class MyHomePage extends StatelessWidget {
       PortfolioPalette.nudeCream,
       PortfolioAction.addExperience,
     ),
-    ItemHomepage(
-      'Log Out',
-      Icons.logout,
-      PortfolioPalette.brownDark,
-      PortfolioAction.logout,
-    ),
   ];
 
   int _getColumnCount(double width) {
@@ -47,6 +43,17 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = context.watch<AuthState>().isLoggedIn;
+    final items = [
+      ...primaryItems,
+      ItemHomepage(
+        isLoggedIn ? 'Log Out' : 'Log In',
+        isLoggedIn ? Icons.logout : Icons.login,
+        PortfolioPalette.brownDark,
+        PortfolioAction.authentication,
+      ),
+    ];
+
     // Scaffold provides the page structure and SnackBar area.
     return Scaffold(
       appBar: AppBar(

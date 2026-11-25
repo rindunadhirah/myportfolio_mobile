@@ -9,17 +9,36 @@ import 'package:myportofolio_mobile/main.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:provider/provider.dart';
 
 ApiClient _buildApiClient({String projectBody = '[]', int statusCode = 200}) {
   return ApiClient(
     baseUrl: 'http://example.test',
-    client: MockClient(
-      (_) async => http.Response(
+    client: MockClient((request) async {
+      if (request.url.path == '/api/v1/auth/token/') {
+        return http.Response('{"token":"test-token"}', 200);
+      }
+      if (request.url.path == '/api/v1/auth/logout/') {
+        return http.Response('', 204);
+      }
+      return http.Response(
         projectBody,
         statusCode,
         headers: {'content-type': 'application/json'},
-      ),
-    ),
+      );
+    }),
+  );
+}
+
+Widget _testApp(Widget home) {
+  final apiClient = _buildApiClient();
+  return MultiProvider(
+    providers: [
+      Provider<ApiClient>.value(value: apiClient),
+      ChangeNotifierProvider(create: (_) => AuthState(apiClient)),
+    ],
+    child: MaterialApp(home: home),
   );
 }
 
@@ -33,11 +52,11 @@ Future<void> _pumpPortfolioApp(
 }
 
 Future<void> _pumpProjectForm(WidgetTester tester) async {
-  await tester.pumpWidget(const MaterialApp(home: ProjectFormPage()));
+  await tester.pumpWidget(_testApp(const ProjectFormPage()));
 }
 
 Future<void> _pumpExperienceForm(WidgetTester tester) async {
-  await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
+  await tester.pumpWidget(_testApp(const ExperienceFormPage()));
 }
 
 Future<void> _tapVisibleText(WidgetTester tester, String text) async {
@@ -49,6 +68,11 @@ Future<void> _tapVisibleText(WidgetTester tester, String text) async {
 
 Future<void> _openProjectFormFromCard(WidgetTester tester) async {
   await _tapVisibleText(tester, 'Add Project');
+  await tester.pumpAndSettle();
+  expect(find.text('Welcome back'), findsOneWidget);
+  await tester.enterText(find.byKey(const Key('login-username')), 'owner');
+  await tester.enterText(find.byKey(const Key('login-password')), 'password');
+  await tester.tap(find.byKey(const Key('login-submit')));
   await tester.pumpAndSettle();
   expect(find.text('Add a Project'), findsOneWidget);
 }
@@ -80,28 +104,21 @@ void main() {
     expect(find.text('View Projects'), findsOneWidget);
     expect(find.text('Add Project'), findsOneWidget);
     expect(find.text('Add Experience'), findsOneWidget);
-    expect(find.text('Log Out'), findsOneWidget);
+    expect(find.text('Log In'), findsOneWidget);
   });
 
-  const actionNames = [
-    'View Projects',
-    'Add Project',
-    'Add Experience',
-    'Log Out',
-  ];
+  testWidgets('login action opens the login screen', (
+    WidgetTester tester,
+  ) async {
+    await _pumpPortfolioApp(tester);
 
-  for (final actionName in actionNames) {
-    testWidgets('$actionName displays the correct feedback message', (
-      WidgetTester tester,
-    ) async {
-      await _pumpPortfolioApp(tester);
-      await _tapVisibleText(tester, actionName);
-      await tester.pump();
+    await _tapVisibleText(tester, 'Log In');
+    await tester.pumpAndSettle();
 
-      expect(find.text('$actionName selected.'), findsOneWidget);
-      expect(find.byType(SnackBar), findsOneWidget);
-    });
-  }
+    expect(find.text('Welcome back'), findsOneWidget);
+    expect(find.byKey(const Key('login-username')), findsOneWidget);
+    expect(find.byKey(const Key('login-password')), findsOneWidget);
+  });
 
   testWidgets('drawer displays navigation entries', (
     WidgetTester tester,
@@ -116,6 +133,7 @@ void main() {
     expect(find.widgetWithText(ListTile, 'View Projects'), findsOneWidget);
     expect(find.widgetWithText(ListTile, 'Add Project'), findsOneWidget);
     expect(find.widgetWithText(ListTile, 'Add Experience'), findsOneWidget);
+    expect(find.widgetWithText(ListTile, 'Log In'), findsOneWidget);
   });
 
   testWidgets('drawer opens the project form', (WidgetTester tester) async {
@@ -124,6 +142,11 @@ void main() {
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(ListTile, 'Add Project'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('login-username')), 'owner');
+    await tester.enterText(find.byKey(const Key('login-password')), 'password');
+    await tester.tap(find.byKey(const Key('login-submit')));
     await tester.pumpAndSettle();
 
     expect(find.text('Add a Project'), findsOneWidget);
