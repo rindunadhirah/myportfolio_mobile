@@ -22,6 +22,21 @@ ApiClient _buildApiClient({String projectBody = '[]', int statusCode = 200}) {
       if (request.url.path == '/api/v1/auth/logout/') {
         return http.Response('', 204);
       }
+      if (request.url.path == '/api/v1/projects/' && request.method == 'POST') {
+        final submitted = jsonDecode(request.body) as Map<String, dynamic>;
+        return http.Response(
+          jsonEncode({
+            ...submitted,
+            'id': '36bc13fa-2ed6-463d-b770-d9da337e1f64',
+            'slug': 'portfolio-mobile',
+            'created_at': '2026-11-25T00:00:00Z',
+            'star_count': 0,
+            'is_starred': false,
+            'starred_by_names': '',
+          }),
+          201,
+        );
+      }
       return http.Response(
         projectBody,
         statusCode,
@@ -31,12 +46,17 @@ ApiClient _buildApiClient({String projectBody = '[]', int statusCode = 200}) {
   );
 }
 
-Widget _testApp(Widget home) {
+Widget _testApp(Widget home, {bool isLoggedIn = false}) {
   final apiClient = _buildApiClient();
   return MultiProvider(
     providers: [
       Provider<ApiClient>.value(value: apiClient),
-      ChangeNotifierProvider(create: (_) => AuthState(apiClient)),
+      ChangeNotifierProvider(
+        create: (_) => AuthState(
+          apiClient,
+          initialToken: isLoggedIn ? 'test-token' : null,
+        ),
+      ),
     ],
     child: MaterialApp(home: home),
   );
@@ -52,7 +72,7 @@ Future<void> _pumpPortfolioApp(
 }
 
 Future<void> _pumpProjectForm(WidgetTester tester) async {
-  await tester.pumpWidget(_testApp(const ProjectFormPage()));
+  await tester.pumpWidget(_testApp(const ProjectFormPage(), isLoggedIn: true));
 }
 
 Future<void> _pumpExperienceForm(WidgetTester tester) async {
@@ -64,6 +84,21 @@ Future<void> _tapVisibleText(WidgetTester tester, String text) async {
   await tester.ensureVisible(target);
   await tester.pumpAndSettle();
   await tester.tap(target);
+}
+
+Future<void> _tapProjectSubmit(WidgetTester tester) async {
+  final button = find.byKey(const Key('project-submit'));
+  final formScrollable = find.descendant(
+    of: find.byType(SingleChildScrollView),
+    matching: find.byType(Scrollable),
+  );
+  await tester.scrollUntilVisible(
+    button,
+    400,
+    scrollable: formScrollable,
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(button);
 }
 
 Future<void> _openProjectFormFromCard(WidgetTester tester) async {
@@ -252,11 +287,17 @@ void main() {
   ) async {
     await _pumpProjectForm(tester);
 
-    await _tapVisibleText(tester, 'Save Project');
+    await _tapProjectSubmit(tester);
     await tester.pumpAndSettle();
 
-    expect(find.text('Enter a project name.'), findsOneWidget);
-    expect(find.text('Enter a project description.'), findsOneWidget);
+    expect(find.text('Enter a project title.'), findsOneWidget);
+    expect(find.text('Enter a project summary.'), findsOneWidget);
+    expect(find.text('Enter a project context.'), findsOneWidget);
+    expect(find.text('Enter a project role.'), findsOneWidget);
+    expect(find.text('Enter a contribution.'), findsOneWidget);
+    expect(find.text('Enter a technology.'), findsOneWidget);
+    expect(find.text('Enter a project URL.'), findsOneWidget);
+    expect(find.text('Enter a start date.'), findsOneWidget);
     expect(find.text('Project added successfully!'), findsNothing);
   });
 
@@ -265,11 +306,11 @@ void main() {
   ) async {
     await _pumpProjectForm(tester);
 
-    final fields = find.byType(TextFormField);
-    await tester.enterText(fields.at(0), 'Portfolio Mobile');
-    await tester.enterText(fields.at(1), 'A Flutter portfolio project');
-    await tester.enterText(fields.at(3), 'invalid-link');
-    await _tapVisibleText(tester, 'Save Project');
+    await tester.enterText(
+      find.byKey(const Key('project-url')),
+      'invalid-link',
+    );
+    await _tapProjectSubmit(tester);
     await tester.pumpAndSettle();
 
     expect(
@@ -284,45 +325,64 @@ void main() {
   ) async {
     await _pumpProjectForm(tester);
 
-    final fields = find.byType(TextFormField);
-    await tester.enterText(fields.at(0), 'Portfolio Mobile');
-    await tester.enterText(fields.at(1), 'A Flutter portfolio project');
-    await tester.enterText(fields.at(2), 'Flutter, Dart');
-    await tester.enterText(fields.at(3), 'https://example.com');
+    await tester.enterText(
+      find.byKey(const Key('project-title')),
+      'Portfolio Mobile',
+    );
+    await tester.enterText(
+      find.byKey(const Key('project-summary')),
+      'A Flutter portfolio project',
+    );
+    await tester.enterText(
+      find.byKey(const Key('project-context')),
+      'Tutorial 10',
+    );
+    await tester.enterText(find.byKey(const Key('project-role')), 'Developer');
+    await tester.enterText(
+      find.byKey(const Key('project-contributions')),
+      'Connected Flutter to Django.\nAdded token login.',
+    );
+    await tester.enterText(
+      find.byKey(const Key('project-technologies')),
+      'Flutter, Dart',
+    );
+    await tester.enterText(
+      find.byKey(const Key('project-url')),
+      'https://example.com',
+    );
+    await _chooseInitialDate(tester, const Key('project-start-date'));
+    await tester.enterText(
+      find.byKey(const Key('project-achievement')),
+      'Completed Tutorial 10',
+    );
 
-    final categoryField = find.byType(DropdownButtonFormField<String>);
-    await tester.ensureVisible(categoryField);
-    await tester.pumpAndSettle();
-    await tester.tap(categoryField);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Mobile Development').last);
-    await tester.pumpAndSettle();
-
-    await _tapVisibleText(tester, 'Save Project');
-    await tester.pumpAndSettle();
+    await _tapProjectSubmit(tester);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('Project added successfully!'), findsOneWidget);
-    expect(find.text('Project Name: Portfolio Mobile'), findsOneWidget);
-    expect(
-      find.text('Description: A Flutter portfolio project'),
-      findsOneWidget,
-    );
-    expect(find.text('Category: Mobile Development'), findsOneWidget);
+    expect(find.text('Project: Portfolio Mobile'), findsOneWidget);
+    expect(find.text('Role: Developer'), findsOneWidget);
     expect(find.text('Technologies: Flutter, Dart'), findsOneWidget);
-    expect(find.text('Link: https://example.com'), findsOneWidget);
 
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
-    final resetFields = tester
-        .widgetList<TextFormField>(find.byType(TextFormField))
-        .toList();
-    for (final field in resetFields) {
-      expect(field.controller?.text, isEmpty);
-    }
-    expect(find.text('Web Development'), findsOneWidget);
-    expect(find.text('Enter a project name.'), findsNothing);
-    expect(find.text('Enter a project description.'), findsNothing);
+    expect(
+      tester
+          .widget<TextFormField>(find.byKey(const Key('project-title')))
+          .controller
+          ?.text,
+      isEmpty,
+    );
+    expect(
+      tester
+          .widget<TextFormField>(find.byKey(const Key('project-start-date')))
+          .controller
+          ?.text,
+      isEmpty,
+    );
+    expect(find.text('Enter a project title.'), findsNothing);
   });
 
   testWidgets('empty experience form displays validation messages', (

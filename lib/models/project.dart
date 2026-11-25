@@ -8,7 +8,7 @@ class Project {
   const Project({
     this.id,
     required this.title,
-    required this.slug,
+    this.slug = '',
     required this.summary,
     required this.context,
     required this.role,
@@ -57,5 +57,9 @@ class Project {
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ProjectToJson(this);
+  Map<String, dynamic> toJson() {
+    final json = _$ProjectToJson(this);
+    if (slug.isEmpty) json.remove('slug');
+    return json;
+  }
 }

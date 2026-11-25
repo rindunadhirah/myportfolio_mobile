@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:myportofolio_mobile/models/project.dart';
 import 'package:myportofolio_mobile/services/api_client.dart';
 
 void main() {
@@ -73,6 +74,52 @@ void main() {
               ),
         ),
       );
+    });
+
+    test('creates a project with its token and JSON body', () async {
+      final client = ApiClient(
+        baseUrl: 'http://example.test',
+        client: MockClient((request) async {
+          expect(request.url.path, '/api/v1/projects/');
+          expect(request.method, 'POST');
+          expect(request.headers['Authorization'], 'Token mobile-token');
+          final body = jsonDecode(request.body) as Map<String, dynamic>;
+          expect(body['title'], 'Portfolio Mobile');
+          expect(body.containsKey('slug'), isFalse);
+
+          return http.Response(
+            jsonEncode({
+              ...body,
+              'id': '36bc13fa-2ed6-463d-b770-d9da337e1f64',
+              'slug': 'portfolio-mobile',
+              'created_at': '2026-11-25T00:00:00Z',
+              'star_count': 0,
+              'is_starred': false,
+              'starred_by_names': '',
+            }),
+            201,
+          );
+        }),
+      );
+      const project = Project(
+        title: 'Portfolio Mobile',
+        summary: 'A Flutter portfolio.',
+        context: 'Tutorial 10',
+        role: 'Developer',
+        contributions: ['Connected the API.'],
+        technologies: ['Flutter', 'Django'],
+        projectUrl: 'https://example.com',
+        imagePath: '',
+        startedOn: '2026-11-25',
+      );
+
+      final created = await client.createProject(
+        project,
+        token: 'mobile-token',
+      );
+
+      expect(created.id, isNotNull);
+      expect(created.slug, 'portfolio-mobile');
     });
   });
 }

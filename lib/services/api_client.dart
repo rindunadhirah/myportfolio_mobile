@@ -52,6 +52,36 @@ class ApiClient {
     }
   }
 
+  /// Creates a project using the current authenticated Django account.
+  Future<Project> createProject(
+    Project project, {
+    required String token,
+  }) async {
+    try {
+      final response = await _client.post(
+        _uri('/api/v1/projects/'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Token $token',
+        },
+        body: jsonEncode(project.toJson()),
+      );
+      _ensureSuccess(response);
+      return Project.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
+    } on http.ClientException {
+      throw const ApiException(
+        'The portfolio server could not be reached. Please try again.',
+      );
+    } on FormatException {
+      throw const ApiException(
+        'The saved project could not be read. Please refresh the list.',
+      );
+    }
+  }
+
   /// Exchanges Django credentials for a mobile authentication token.
   Future<String> obtainToken(String username, String password) async {
     try {
@@ -114,9 +144,31 @@ class ApiClient {
     if (response.statusCode >= 200 && response.statusCode < 300) return;
 
     throw ApiException(
-      'The server could not complete the request.',
+      _readErrorMessage(response.body),
       statusCode: response.statusCode,
     );
+  }
+
+  String _readErrorMessage(String body) {
+    try {
+      final decoded = jsonDecode(body);
+      final messages = <String>[];
+
+      if (decoded is Map<String, dynamic>) {
+        for (final value in decoded.values) {
+          if (value is List) {
+            messages.addAll(value.map((item) => item.toString()));
+          } else if (value is String) {
+            messages.add(value);
+          }
+        }
+      }
+
+      if (messages.isNotEmpty) return messages.join(' ');
+    } on FormatException {
+      // Do not expose HTML error pages returned by the server.
+    }
+    return 'The server could not complete the request.';
   }
 
   void close() => _client.close();
