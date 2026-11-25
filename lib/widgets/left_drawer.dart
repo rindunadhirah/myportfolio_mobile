@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
 import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
 
 class LeftDrawer extends StatelessWidget {
@@ -36,6 +37,21 @@ class LeftDrawer extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.folder_outlined,
+              color: PortfolioPalette.brown,
+            ),
+            title: const Text('View Projects'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProjectListScreen(),
+                ),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(

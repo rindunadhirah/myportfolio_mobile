@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
 import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
 
 /// Displays a tappable portfolio action and its feedback message.
@@ -31,6 +32,7 @@ class ProjectCard extends StatelessWidget {
             ..showSnackBar(SnackBar(content: Text('${item.name} selected.')));
 
           final Widget? destination = switch (item.action) {
+            PortfolioAction.viewProjects => const ProjectListScreen(),
             PortfolioAction.addProject => const ProjectFormPage(),
             PortfolioAction.addExperience => const ExperienceFormPage(),
             _ => null,

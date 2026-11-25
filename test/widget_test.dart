@@ -1,12 +1,35 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'package:myportofolio_mobile/main.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
 
-Future<void> _pumpPortfolioApp(WidgetTester tester) async {
-  await tester.pumpWidget(const MyApp());
+ApiClient _buildApiClient({String projectBody = '[]', int statusCode = 200}) {
+  return ApiClient(
+    baseUrl: 'http://example.test',
+    client: MockClient(
+      (_) async => http.Response(
+        projectBody,
+        statusCode,
+        headers: {'content-type': 'application/json'},
+      ),
+    ),
+  );
+}
+
+Future<void> _pumpPortfolioApp(
+  WidgetTester tester, {
+  String projectBody = '[]',
+}) async {
+  await tester.pumpWidget(
+    MyApp(apiClient: _buildApiClient(projectBody: projectBody)),
+  );
 }
 
 Future<void> _pumpProjectForm(WidgetTester tester) async {
@@ -90,6 +113,7 @@ void main() {
 
     expect(find.text('Nadhirah'), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
+    expect(find.widgetWithText(ListTile, 'View Projects'), findsOneWidget);
     expect(find.widgetWithText(ListTile, 'Add Project'), findsOneWidget);
     expect(find.widgetWithText(ListTile, 'Add Experience'), findsOneWidget);
   });
@@ -104,6 +128,48 @@ void main() {
 
     expect(find.text('Add a Project'), findsOneWidget);
     expect(find.text('Save Project'), findsOneWidget);
+  });
+
+  testWidgets('project list loads API data and opens project details', (
+    WidgetTester tester,
+  ) async {
+    final projectBody = jsonEncode([
+      {
+        'id': '36bc13fa-2ed6-463d-b770-d9da337e1f64',
+        'title': 'SisPro',
+        'slug': 'sispro',
+        'summary': 'A women safety and smart protection platform.',
+        'context': 'SISTECH final project',
+        'role': 'Product Manager',
+        'contributions': ['Defined product requirements.'],
+        'technologies': ['Django', 'Figma'],
+        'project_url': 'https://example.com/sispro',
+        'image_path': '',
+        'started_on': '2026-05-01',
+        'ended_on': null,
+        'achievement': 'Best Final Project',
+        'is_featured': true,
+        'created_at': '2026-05-01T00:00:00Z',
+        'star_count': 0,
+        'is_starred': false,
+        'starred_by_names': '',
+      },
+    ]);
+    await _pumpPortfolioApp(tester, projectBody: projectBody);
+
+    await _tapVisibleText(tester, 'View Projects');
+    await tester.pumpAndSettle();
+
+    expect(find.text('My Projects'), findsOneWidget);
+    expect(find.text('SisPro'), findsOneWidget);
+    expect(find.text('Django  •  Figma'), findsOneWidget);
+
+    await tester.tap(find.text('SisPro'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Project Details'), findsOneWidget);
+    expect(find.text('Defined product requirements.'), findsOneWidget);
+    expect(find.text('Best Final Project'), findsOneWidget);
   });
 
   testWidgets('project card opens the form and Back returns home', (
