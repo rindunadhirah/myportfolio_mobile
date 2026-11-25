@@ -1,14 +1,22 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
+import 'package:myportofolio_mobile/screens/login_screen.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
 import 'package:myportofolio_mobile/theme/portfolio_theme.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = context.watch<AuthState>().isLoggedIn;
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -39,6 +47,21 @@ class LeftDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(
+              Icons.folder_outlined,
+              color: PortfolioPalette.brown,
+            ),
+            title: const Text('View Projects'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProjectListScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(
               Icons.home_outlined,
               color: PortfolioPalette.brown,
             ),
@@ -56,7 +79,8 @@ class LeftDrawer extends StatelessWidget {
               color: PortfolioPalette.brown,
             ),
             title: const Text('Add Project'),
-            onTap: () {
+            onTap: () async {
+              if (!await ensureLoggedIn(context) || !context.mounted) return;
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -78,6 +102,37 @@ class LeftDrawer extends StatelessWidget {
                   builder: (context) => const ExperienceFormPage(),
                 ),
               );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: Icon(
+              isLoggedIn ? Icons.logout : Icons.login,
+              color: PortfolioPalette.brown,
+            ),
+            title: Text(isLoggedIn ? 'Log Out' : 'Log In'),
+            onTap: () async {
+              if (!isLoggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+                return;
+              }
+
+              try {
+                await context.read<AuthState>().logout();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('You are now logged out.')),
+                  );
+                }
+              } on ApiException catch (error) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(error.message)));
+                }
+              }
             },
           ),
         ],

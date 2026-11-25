@@ -1,6 +1,6 @@
 # MyPortfolio Mobile
 
-MyPortfolio Mobile is a Flutter application that introduces my personal portfolio. It displays my student information and provides navigation, project actions, and validated forms for entering project and experience data.
+MyPortfolio Mobile is a Flutter application that introduces my personal portfolio. It displays my student information and connects to my Django REST API to load projects, authenticate users, and save project data.
 
 This project continues the personal portfolio ecosystem that I previously built with Django. The mobile application is stored in a separate repository from the Django project.
 
@@ -8,10 +8,11 @@ This project continues the personal portfolio ecosystem that I previously built 
 
 - Displays my NPM, full name, and PBP class
 - Provides four portfolio action cards with different colors
-- Shows a matching SnackBar message when an action is selected
-- Provides a drawer for navigation between Home, Add Project, and Add Experience
-- Opens the project form from both the drawer and the action card
-- Validates required project information and optional project links
+- Provides a drawer for navigation between Home, Projects, Add Project, and Add Experience
+- Loads real project data from Django with loading, error, empty, retry, and refresh states
+- Displays project details, contributions, technologies, dates, and optional images
+- Uses token login and logout with protected project creation
+- Validates project information and saves it through the authenticated API
 - Displays submitted project information in a confirmation dialog
 - Provides an experience form with categories, dates, and ongoing status
 - Checks empty spaces, text length, required dates, and date order
@@ -19,13 +20,15 @@ This project continues the personal portfolio ecosystem that I previously built 
 - Displays all submitted experience information in a confirmation dialog
 - Adjusts the card layout for desktop, tablet, and mobile screens
 - Uses reusable and separated model and widget files
-- Includes widget tests for menu actions, navigation, validation, and form submission
+- Includes unit and widget tests for API calls, authentication, navigation, validation, and form submission
+- Uses GitHub Actions to run checks and build a downloadable release APK
 
 ## Requirements
 
 - Flutter 3.47.9 or a compatible stable version
 - Dart 3.13.7 or a compatible version
 - Chrome, an Android emulator, or an Android device
+- The Django portfolio backend from Tutorial 07 and Tutorial 10
 
 ## How to Run the Project
 
@@ -47,17 +50,32 @@ This project continues the personal portfolio ecosystem that I previously built 
    flutter pub get
    ```
 
-4. Run the application in Chrome.
+4. Generate the JSON serialization file.
 
    ```bash
-   flutter run -d chrome
+   dart run build_runner build
    ```
+
+5. Start the Django backend from the separate `myportfolio` repository.
+
+   ```bash
+   python manage.py runserver
+   ```
+
+6. Run the application in Chrome and point it to the local backend.
+
+   ```bash
+   flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8000
+   ```
+
+Android emulators use `http://10.0.2.2:8000` by default, so no Dart define is needed when running with `flutter run` on an emulator.
 
 ## Code Quality Checks
 
 Run these commands from the project root before committing changes.
 
 ```bash
+dart run build_runner build
 dart format .
 flutter analyze
 flutter test
@@ -68,29 +86,46 @@ flutter test
 ```text
 lib/
   main.dart
+  config.dart
   models/
     item_homepage.dart
+    project.dart
   screens/
     experience_form.dart
+    login_screen.dart
     menu.dart
     project_form.dart
+    project_list_screen.dart
+    project_detail_screen.dart
+  services/
+    api_client.dart
+    auth_state.dart
   theme/
     portfolio_theme.dart
   utils/
     form_validators.dart
   widgets/
     date_form_field.dart
+    auth_guard.dart
     form_intro.dart
     info_card.dart
     left_drawer.dart
     project_card.dart
 test/
+  api_client_test.dart
+  auth_state_test.dart
   widget_test.dart
 ```
 
 - `main.dart` starts the application and defines its theme.
 - `menu.dart` arranges the main portfolio page.
-- `project_form.dart` provides project inputs, validation, and confirmation.
+- `project_form.dart` validates and submits authenticated project data to Django.
+- `project_list_screen.dart` loads projects and handles loading, error, empty, and refresh states.
+- `project_detail_screen.dart` displays complete information for one project.
+- `login_screen.dart` validates Django account credentials.
+- `api_client.dart` handles API requests and safe error messages.
+- `auth_state.dart` stores the current in-memory token and updates the interface.
+- `auth_guard.dart` protects actions that require login.
 - `experience_form.dart` provides experience inputs, date selection, validation, and confirmation.
 - `item_homepage.dart` stores the name, icon, color, and action of each menu item.
 - `portfolio_theme.dart` stores the colors and shared visual theme from the Django portfolio.
@@ -147,6 +182,20 @@ test/
 - Displayed every submitted value in a confirmation dialog
 - Reset the complete form after a successful submission
 - Added widget tests for navigation, invalid input, valid input, dialog content, and reset behavior
+
+### Tutorial 10
+
+- Enabled token authentication and CORS in the Django backend
+- Added token login and logout API endpoints
+- Added `http`, `provider`, `json_annotation`, and code generation packages
+- Created a serializable Project model that matches the real Django API
+- Added an API client with safe request and validation error handling
+- Loaded real projects with loading, error, empty, retry, and refresh states
+- Added a complete project detail screen using the portfolio theme
+- Added login, logout, shared authentication state, and protected navigation
+- Connected the project form to authenticated Django project creation
+- Added unit and widget tests for API, authentication, navigation, and submission
+- Added GitHub Actions checks and release APK artifact generation
 
 ## Reflective Questions
 
@@ -223,7 +272,7 @@ test/
 
 ## AI Usage Disclosure
 
-I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutorial 08, Assignment 7, Tutorial 09, and Assignment 8.
+I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutorial 08, Assignment 7, Tutorial 09, Assignment 8, and Tutorial 10.
 
 ### How AI Assisted Me
 
@@ -239,6 +288,9 @@ I used OpenAI Codex in ChatGPT as a learning and development assistant for Tutor
 - Helped separate shared validators and the reusable date field
 - Helped test date input, ongoing status, navigation, dialog content, and form reset
 - Helped adapt the navy, brown, nude, and white web portfolio theme for Flutter
+- Helped adapt the Tutorial 10 API schema to my existing Django Project model
+- Helped implement token authentication, API loading, project submission, and CI/CD
+- Helped add tests for network errors, authentication state, and JSON requests
 - Helped organize this README and explain Flutter concepts in simple English
 
 ### Prompt Strategy
@@ -252,6 +304,8 @@ AI output still required verification. The first tutorial version used sample id
 During Tutorial 09, the first drawer header was too tall for the widget test screen. The expanded test suite found the overflow, so the header was simplified and tested again. The tests also helped verify that the category dropdown returned to its default value after submission. This showed that generated code still needed automated and visual verification.
 
 During Assignment 8, the first reusable validator produced an awkward error message for some field names. I changed the article rule and used a clearer field name for the responsibility summary. One test also tried to tap a button after validation messages changed the form height. The feature worked, but the test produced a warning. I removed the unnecessary tap and ran all checks again. This showed that passing tests are not enough when the test output still contains warnings.
+
+During Tutorial 10, the provided Project example did not match all fields in my existing Django serializer. I kept my real project structure and adapted the Flutter model and form instead of replacing working backend data. I also moved slug generation to Django because a slug is an internal URL value and should not be entered manually in the mobile form. The tests identified older assertions that expected `403` for anonymous requests. I updated them to `401` because token authentication now correctly distinguishes unauthenticated and unauthorized requests.
 
 The date picker prevents users from selecting an end date before the chosen start date. The form still includes a date order validator as a second safety check. I kept both because interface limits and data validation have different purposes.
 
@@ -277,3 +331,6 @@ The AI could not know my identity, class, design preference, or repository setup
 16. I asked the AI to audit the code, documentation, Git history, and assignment rubric before submission.
 17. I asked the AI to simplify the UI while matching the colors and rounded design of my Django portfolio.
 18. I asked the AI to rewrite the visible interface text in natural English that matches the tone of my web portfolio.
+19. I asked the AI to read Tutorial 10 and divide backend integration into clear commits.
+20. I asked the AI to merge Assignment 8 and complete the first half without pushing.
+21. I asked the AI to finish authentication, project submission, CI/CD, tests, and documentation before the deadline.
