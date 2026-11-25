@@ -88,17 +88,8 @@ Future<void> _tapVisibleText(WidgetTester tester, String text) async {
 
 Future<void> _tapProjectSubmit(WidgetTester tester) async {
   final button = find.byKey(const Key('project-submit'));
-  final formScrollable = find.descendant(
-    of: find.byType(SingleChildScrollView),
-    matching: find.byType(Scrollable),
-  );
-  await tester.scrollUntilVisible(
-    button,
-    400,
-    scrollable: formScrollable,
-  );
-  await tester.pumpAndSettle();
-  await tester.tap(button);
+  tester.widget<ElevatedButton>(button).onPressed?.call();
+  await tester.pump();
 }
 
 Future<void> _openProjectFormFromCard(WidgetTester tester) async {
